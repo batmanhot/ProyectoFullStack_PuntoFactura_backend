@@ -3,7 +3,7 @@ import { BadRequestException, Body, Controller, Get, Module, Param, Post, Query,
 import { NestFactory } from '@nestjs/core'
 import { FastifyAdapter } from '@nestjs/platform-fastify'
 import { authenticated, login, logout, manageAccount, provision, session } from './accounts.mjs'
-import { businessData, factuSaasConnectionStatus, findDocument, operate, platformData, saveCatalog } from './business.mjs'
+import { businessData, factuSaasConnectionStatus, findDocument, operate, platformData, publicPlatformBranding, saveCatalog } from './business.mjs'
 import { pool } from './database.mjs'
 import { registerFactuSaasWebhook } from './connectors/factusaas-webhook.mjs'
 import { sendFactuSaasDocument } from './connectors/send-factusaas.mjs'
@@ -29,6 +29,7 @@ class AuthController {
   async logout(request, reply) { return logout(request, reply) }
 }
 class WorkspaceController {
+  async branding() { return publicPlatformBranding() }
   async platform(request) { return platformData(await authenticated(request)) }
   async business(request, tenant, company) { return businessData(await authenticated(request), tenant, company) }
   async factusaasStatus(request, tenant) { return factuSaasConnectionStatus(await authenticated(request), tenant) }
@@ -61,6 +62,7 @@ route(AuthController, 'current', Get('auth/session'), [Req()])
 route(AuthController, 'login', Post('auth/login'), [Req(), Res({ passthrough: true }), Body()])
 route(AuthController, 'logout', Post('auth/logout'), [Req(), Res({ passthrough: true })])
 Controller()(WorkspaceController)
+route(WorkspaceController, 'branding', Get('branding'))
 route(WorkspaceController, 'platform', Get('platform'), [Req()])
 route(WorkspaceController, 'business', Get('business/:tenant'), [Req(), Param('tenant'), Query('company')])
 route(WorkspaceController, 'factusaasStatus', Get('business/:tenant/factusaas-status'), [Req(), Param('tenant')])

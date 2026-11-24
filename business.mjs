@@ -13,6 +13,7 @@ const operations = {
   'update-plan': ['update_service_plan', 'scalar', ['p_plan_id','p_name','p_price','p_limit','p_users','p_rucs','p_overage_allowed','p_overage_price']],
   'update-membership': ['update_managed_membership', 'scalar', ['p_tenant_id','p_user_id','p_role','p_active']],
   'update-igv': ['update_platform_igv', 'scalar', ['p_rate']],
+  'update-platform-branding': ['update_platform_branding', 'scalar', ['p_application_name','p_application_mark','p_application_icon_data']],
 }
 
 export function operate(user, operation, body) {
@@ -127,7 +128,17 @@ export function platformData(user) {
       renewals: await query('select id,tenant_id,paid_on,new_expiry,amount_pen,payment_reference from public.subscription_renewals order by created_at desc limit 100'),
       audit: await query('select id,tenant_id,action,created_at from public.tenant_audit_log order by created_at desc limit 100'),
       rate: (await query('select igv_rate from public.platform_settings'))[0]?.igv_rate,
+      branding: (await query('select application_name as "applicationName", application_mark as "applicationMark", application_icon_data as "applicationIconData" from public.platform_settings where singleton'))[0],
       usage: await query('select tenant_id,sent_count from public.monthly_emission_usage where period_start=' + month),
     }
+  })
+}
+
+export function publicPlatformBranding() {
+  return transaction(async client => {
+    await client.query('set local role authenticated')
+    const { rows: [branding] } = await client.query(
+      'select application_name as "applicationName", application_mark as "applicationMark", application_icon_data as "applicationIconData" from public.platform_settings where singleton')
+    return branding ?? { applicationName: 'puntofactura', applicationMark: 'p', applicationIconData: null }
   })
 }
