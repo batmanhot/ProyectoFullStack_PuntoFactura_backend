@@ -1,0 +1,23 @@
+project_id = "punto-factura"
+
+[auth]
+enable_signup = false
+site_url = "http://localhost:5173"
+
+[auth.email]
+enabled = true
+
+[db.seed]
+enabled = false
+
+[functions.provision-tenant]
+verify_jwt = false
+
+[functions.invite-tenant-member]
+verify_jwt = true
+
+[functions.manage-accounts]
+verify_jwt = false
+
+[functions.transmission-webhook]
+verify_jwt = false

@@ -1,0 +1,26 @@
+{
+  "name": "puntofactura-backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "setup": "node setup-local.mjs",
+    "local": "node start-local.mjs",
+    "dev": "node start-local.mjs --watch",
+    "start": "node --env-file-if-exists=.env.local main.mjs",
+    "migrate": "node --env-file=.env.local database/migrate.mjs",
+    "admin": "node --env-file=.env.local database/admin.mjs",
+    "factusaas:check": "node --env-file=.env.local connectors/check-factusaas.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "node --env-file=.env.local tests/factusaas.e2e.mjs"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.6.0",
+    "@nestjs/core": "^12.6.0",
+    "@nestjs/platform-fastify": "^12.6.0",
+    "bcryptjs": "^3.0.3",
+    "pg": "^8.23.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  }
+}
